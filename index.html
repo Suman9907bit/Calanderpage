@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Jana Online Service</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f3f3;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .time {
+      font-size: 20px;
+      color: #27ae60;
+      margin-bottom: 20px;
+    }
+    .section {
+      font-size: 18px;
+      margin: 12px 0;
+    }
+    .holidays {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .holidays h3 {
+      color: #c0392b;
+    }
+    .holidays ul {
+      list-style: square;
+      padding-left: 20px;
+    }
+    .network-status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    footer {
+      margin-top: 30px;
+      color: #555;
+      font-size: 16px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="calendarContent">
+  <h1>📡 Jana Online Service</h1>
+
+  <div class="time" id="liveTime">সময় লোড হচ্ছে...</div>
+
+  <div class="section" id="englishDate">ইংরেজি তারিখ: লোড হচ্ছে...</div>
+  <div class="section" id="banglaDate">বাংলা তারিখ: লোড হচ্ছে...</div>
+  <div class="section" id="season">ঋতু: লোড হচ্ছে...</div>
+  <div class="section" id="temperature">তাপমাত্রা: লোড হচ্ছে...</div>
+  <div class="section" id="moonPhase">চন্দ্রের অবস্থা: লোড হচ্ছে...</div>
+  <div class="section" id="paksha">পক্ষ: লোড হচ্ছে...</div>
+  <div class="section network-status" id="networkStatus">নেটওয়ার্ক স্ট্যাটাস: যাচাই হচ্ছে...</div>
+
+  <div class="holidays">
+    <h3>🎉 আজকের ছুটি/উৎসব:</h3>
+    <ul id="holidayList">
+      <li>লোড হচ্ছে...</li>
+    </ul>
+  </div>
+
+  <button onclick="window.print()">🖨️ প্রিন্ট করুন</button>
+  <button onclick="downloadPDF()">📄 PDF-এ সংরক্ষণ করুন</button>
+
+  <footer>ডিজাইন করেছেন: Mr. Suman Jana</footer>
+</div>
+
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+  function updateTime() {
+    const now = new Date();
+    document.getElementById("liveTime").textContent = "লাইভ সময়: " + now.toLocaleTimeString('bn-BD');
+  }
+
+  function getBanglaDate(gregorianDate) {
+    const banglaMonths = [
+      "বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ",
+      "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ",
+      "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"
+    ];
+    const startOfBoishakh = new Date(gregorianDate.getFullYear(), 3, 14);
+    let banglaYear = gregorianDate.getFullYear() - 593;
+    if (gregorianDate < startOfBoishakh) banglaYear -= 1;
+    const banglaMonthIndex = (gregorianDate.getMonth() + 8) % 12;
+    const banglaMonth = banglaMonths[banglaMonthIndex];
+    return `${banglaMonth} ${banglaYear} বঙ্গাব্দ`;
+  }
+
+  function updateDates() {
+    const now = new Date();
+    const engOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const englishDate = now.toLocaleDateString('en-US', engOptions);
+    document.getElementById("englishDate").textContent = "ইংরেজি তারিখ: " + englishDate;
+    const banglaFormatted = getBanglaDate(now);
+    document.getElementById("banglaDate").textContent = "বাংলা তারিখ: " + banglaFormatted;
+  }
+
+  function updateSeason() {
+    const month = new Date().getMonth() + 1;
+    let season = '';
+    if (month >= 4 && month <= 5) season = 'গ্রীষ্মকাল';
+    else if (month >= 6 && month <= 7) season = 'বর্ষাকাল';
+    else if (month >= 8 && month <= 9) season = 'শরৎকাল';
+    else if (month >= 10 && month <= 11) season = 'হেমন্তকাল';
+    else if (month === 12 || month === 1) season = 'শীতকাল';
+    else season = 'বসন্তকাল';
+    document.getElementById("season").textContent = "ঋতু: " + season;
+  }
+
+  function updateTemperature() {
+    const temperature = "৩২°C"; // ডেমো মান
+    document.getElementById("temperature").textContent = "তাপমাত্রা: " + temperature;
+  }
+
+  function updateMoonDetails() {
+    const moonPhase = "পূর্ণিমা";  // উদাহরণস্বরূপ
+    const paksha = "শুক্ল পক্ষ";
+    document.getElementById("moonPhase").textContent = "চন্দ্রের অবস্থা: " + moonPhase;
+    document.getElementById("paksha").textContent = "পক্ষ: " + paksha;
+  }
+
+  function updateHolidays() {
+    const holidays = {
+      "6-4": ["আজ কোনো ছুটি নেই"],
+      "6-7": ["ঈদ-উল-আযহা (বকর ঈদ)"],
+      "6-11": ["জগন্নাথ স্নান যাত্রা"]
+    };
+    const today = new Date();
+    const key = `${today.getMonth() + 1}-${today.getDate()}`;
+    const holidayList = document.getElementById("holidayList");
+    holidayList.innerHTML = "";
+
+    if (holidays[key]) {
+      holidays[key].forEach(holiday => {
+        const li = document.createElement("li");
+        li.textContent = holiday;
+        holidayList.appendChild(li);
+      });
+    } else {
+      const li = document.createElement("li");
+      li.textContent = "আজ কোনো ছুটি নেই";
+      holidayList.appendChild(li);
+    }
+  }
+
+  function updateNetworkStatus() {
+    const status = navigator.onLine ? "✅ Active" : "❌ Offline";
+    document.getElementById("networkStatus").textContent = "নেটওয়ার্ক স্ট্যাটাস: " + status;
+  }
+
+  function updateAll() {
+    updateTime();
+    updateDates();
+    updateSeason();
+    updateTemperature();
+    updateMoonDetails();
+    updateHolidays();
+    updateNetworkStatus();
+  }
+
+  // PDF Export Function
+  function downloadPDF() {
+    const element = document.getElementById('calendarContent');
+    html2pdf().from(element).save("Jana_Calendar.pdf");
+  }
+
+  // প্রথমবার কল এবং প্রতি ৩০ সেকেন্ডে রিফ্রেশ
+  updateAll();
+  setInterval(updateAll, 30000);
+</script>
+
+</body>
+</html>
