@@ -2,204 +2,232 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>Jana Online Service</title>
+  <title>Jana Online Service - Smart Calendar</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f3f3f3;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .header {
+      width: 100%;
+      background: #4a90e2;
+      color: #fff;
       text-align: center;
+      padding: 15px 0;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    .container {
-      max-width: 700px;
-      margin: auto;
-      background: #ffffff;
-      padding: 25px;
+    .calendar {
+      width: 380px;
+      background: #fff;
       border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      text-align: center;
+      margin: 20px 0;
     }
-    h1 {
-      color: #2c3e50;
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    .time {
+    .calendar-header {
+      background: #4a90e2;
+      color: #fff;
+      padding: 15px;
       font-size: 20px;
-      color: #27ae60;
-      margin-bottom: 20px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .section {
-      font-size: 18px;
-      margin: 12px 0;
-    }
-    .holidays {
-      text-align: left;
-      margin-top: 20px;
-    }
-    .holidays h3 {
-      color: #c0392b;
-    }
-    .holidays ul {
-      list-style: square;
-      padding-left: 20px;
-    }
-    .network-status {
-      margin-top: 15px;
+    .calendar-header button {
+      background: #fff;
+      color: #4a90e2;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
       font-weight: bold;
     }
-    button {
-      margin: 10px 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #3498db;
-      color: white;
-      border: none;
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 10px;
+      text-align: center;
+    }
+    .day-name {
+      font-weight: bold;
+      color: #4a90e2;
+    }
+    .day {
+      padding: 10px;
+      margin: 3px;
       border-radius: 8px;
       cursor: pointer;
     }
-    footer {
-      margin-top: 30px;
-      color: #555;
-      font-size: 16px;
+    .day:hover {
+      background: #d0e6ff;
+    }
+    .today {
+      background: #4a90e2;
+      color: #fff;
+    }
+    .extra-info {
+      background: #f9f9f9;
+      padding: 12px;
       border-top: 1px solid #ddd;
-      padding-top: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+    .footer {
+      width: 100%;
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 14px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
     }
   </style>
 </head>
 <body>
-
-<div class="container" id="calendarContent">
-  <h1>📡 Jana Online Service</h1>
-
-  <div class="time" id="liveTime">সময় লোড হচ্ছে...</div>
-
-  <div class="section" id="englishDate">ইংরেজি তারিখ: লোড হচ্ছে...</div>
-  <div class="section" id="banglaDate">বাংলা তারিখ: লোড হচ্ছে...</div>
-  <div class="section" id="season">ঋতু: লোড হচ্ছে...</div>
-  <div class="section" id="temperature">তাপমাত্রা: লোড হচ্ছে...</div>
-  <div class="section" id="moonPhase">চন্দ্রের অবস্থা: লোড হচ্ছে...</div>
-  <div class="section" id="paksha">পক্ষ: লোড হচ্ছে...</div>
-  <div class="section network-status" id="networkStatus">নেটওয়ার্ক স্ট্যাটাস: যাচাই হচ্ছে...</div>
-
-  <div class="holidays">
-    <h3>🎉 আজকের ছুটি/উৎসব:</h3>
-    <ul id="holidayList">
-      <li>লোড হচ্ছে...</li>
-    </ul>
+  <!-- Header -->
+  <div class="header">
+    Jana Online Service
   </div>
 
-  <button onclick="window.print()">🖨️ প্রিন্ট করুন</button>
-  <button onclick="downloadPDF()">📄 PDF-এ সংরক্ষণ করুন</button>
+  <!-- Calendar -->
+  <div class="calendar">
+    <div class="calendar-header">
+      <button onclick="prevMonth()">◀</button>
+      <span id="monthYear"></span>
+      <button onclick="nextMonth()">▶</button>
+    </div>
+    <div class="days" id="dayNames"></div>
+    <div class="days" id="calendarDays"></div>
 
-  <footer>ডিজাইন করেছেন: Mr. Suman Jana</footer>
-</div>
+    <!-- নিচে লাইভ ইনফো -->
+    <div class="extra-info">
+      ⏰ সময়: <span id="liveTime"></span><br>
+      📅 বাংলা তারিখ: <span id="banglaDate"></span><br>
+      🏛 সরকারি ছুটি: <span id="holiday"></span><br>
+      🌿 ঋতু: <span id="ritu"></span>
+    </div>
+  </div>
 
-<!-- PDF Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Footer -->
+  <div class="footer">
+    Credit by Suman
+  </div>
 
-<script>
-  function updateTime() {
-    const now = new Date();
-    document.getElementById("liveTime").textContent = "লাইভ সময়: " + now.toLocaleTimeString('bn-BD');
-  }
+  <script>
+    const monthYear = document.getElementById("monthYear");
+    const calendarDays = document.getElementById("calendarDays");
+    const dayNames = document.getElementById("dayNames");
 
-  function getBanglaDate(gregorianDate) {
-    const banglaMonths = [
-      "বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ",
-      "ভাদ্র", "আশ্বিন", "কার্তিক", "অগ্রহায়ণ",
-      "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র"
-    ];
-    const startOfBoishakh = new Date(gregorianDate.getFullYear(), 3, 14);
-    let banglaYear = gregorianDate.getFullYear() - 593;
-    if (gregorianDate < startOfBoishakh) banglaYear -= 1;
-    const banglaMonthIndex = (gregorianDate.getMonth() + 8) % 12;
-    const banglaMonth = banglaMonths[banglaMonthIndex];
-    return `${banglaMonth} ${banglaYear} বঙ্গাব্দ`;
-  }
+    const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    dayNames.innerHTML = dayLabels.map(d => `<div class="day-name">${d}</div>`).join("");
 
-  function updateDates() {
-    const now = new Date();
-    const engOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const englishDate = now.toLocaleDateString('en-US', engOptions);
-    document.getElementById("englishDate").textContent = "ইংরেজি তারিখ: " + englishDate;
-    const banglaFormatted = getBanglaDate(now);
-    document.getElementById("banglaDate").textContent = "বাংলা তারিখ: " + banglaFormatted;
-  }
+    let date = new Date();
 
-  function updateSeason() {
-    const month = new Date().getMonth() + 1;
-    let season = '';
-    if (month >= 4 && month <= 5) season = 'গ্রীষ্মকাল';
-    else if (month >= 6 && month <= 7) season = 'বর্ষাকাল';
-    else if (month >= 8 && month <= 9) season = 'শরৎকাল';
-    else if (month >= 10 && month <= 11) season = 'হেমন্তকাল';
-    else if (month === 12 || month === 1) season = 'শীতকাল';
-    else season = 'বসন্তকাল';
-    document.getElementById("season").textContent = "ঋতু: " + season;
-  }
+    // --- ক্যালেন্ডার রেন্ডার ---
+    function renderCalendar() {
+      const year = date.getFullYear();
+      const month = date.getMonth();
 
-  function updateTemperature() {
-    const temperature = "৩২°C"; // ডেমো মান
-    document.getElementById("temperature").textContent = "তাপমাত্রা: " + temperature;
-  }
+      monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
 
-  function updateMoonDetails() {
-    const moonPhase = "পূর্ণিমা";  // উদাহরণস্বরূপ
-    const paksha = "শুক্ল পক্ষ";
-    document.getElementById("moonPhase").textContent = "চন্দ্রের অবস্থা: " + moonPhase;
-    document.getElementById("paksha").textContent = "পক্ষ: " + paksha;
-  }
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
 
-  function updateHolidays() {
-    const holidays = {
-      "6-4": ["আজ কোনো ছুটি নেই"],
-      "6-7": ["ঈদ-উল-আযহা (বকর ঈদ)"],
-      "6-11": ["জগন্নাথ স্নান যাত্রা"]
-    };
-    const today = new Date();
-    const key = `${today.getMonth() + 1}-${today.getDate()}`;
-    const holidayList = document.getElementById("holidayList");
-    holidayList.innerHTML = "";
+      let days = "";
+      for (let i = 0; i < firstDay; i++) {
+        days += `<div></div>`;
+      }
 
-    if (holidays[key]) {
-      holidays[key].forEach(holiday => {
-        const li = document.createElement("li");
-        li.textContent = holiday;
-        holidayList.appendChild(li);
-      });
-    } else {
-      const li = document.createElement("li");
-      li.textContent = "আজ কোনো ছুটি নেই";
-      holidayList.appendChild(li);
+      for (let i = 1; i <= lastDate; i++) {
+        let today = "";
+        const currentDate = new Date();
+        if (
+          i === currentDate.getDate() &&
+          month === currentDate.getMonth() &&
+          year === currentDate.getFullYear()
+        ) {
+          today = "today";
+        }
+        days += `<div class="day ${today}">${i}</div>`;
+      }
+
+      calendarDays.innerHTML = days;
     }
-  }
 
-  function updateNetworkStatus() {
-    const status = navigator.onLine ? "✅ Active" : "❌ Offline";
-    document.getElementById("networkStatus").textContent = "নেটওয়ার্ক স্ট্যাটাস: " + status;
-  }
+    function prevMonth() {
+      date.setMonth(date.getMonth() - 1);
+      renderCalendar();
+    }
+    function nextMonth() {
+      date.setMonth(date.getMonth() + 1);
+      renderCalendar();
+    }
 
-  function updateAll() {
+    renderCalendar();
+
+    // --- লাইভ টাইম ---
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("liveTime").textContent = now.toLocaleTimeString("bn-BD");
+    }
+    setInterval(updateTime, 1000);
     updateTime();
-    updateDates();
-    updateSeason();
-    updateTemperature();
-    updateMoonDetails();
-    updateHolidays();
-    updateNetworkStatus();
-  }
 
-  // PDF Export Function
-  function downloadPDF() {
-    const element = document.getElementById('calendarContent');
-    html2pdf().from(element).save("Jana_Calendar.pdf");
-  }
+    // --- বাংলা তারিখ (সাধারণ কনভার্সন) ---
+    function getBanglaDate() {
+      const months = ["বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"];
+      const now = new Date();
+      const day = now.getDate();
+      const month = (now.getMonth() + 8) % 12; // Approximate Bangla month shift
+      const year = now.getFullYear() - 593; // Bangla year offset
 
-  // প্রথমবার কল এবং প্রতি ৩০ সেকেন্ডে রিফ্রেশ
-  updateAll();
-  setInterval(updateAll, 30000);
-</script>
+      return `${day} ${months[month]} ${year} বঙ্গাব্দ`;
+    }
+    document.getElementById("banglaDate").textContent = getBanglaDate();
 
+    // --- সরকারি ছুটি চেক ---
+    function checkHoliday() {
+      const holidays = {
+        "1-1": "নববর্ষ",
+        "26-1": "প্রজাতন্ত্র দিবস",
+        "15-8": "স্বাধীনতা দিবস",
+        "16-12": "বিজয় দিবস",
+      };
+      const now = new Date();
+      const key = `${now.getDate()}-${now.getMonth()+1}`;
+      document.getElementById("holiday").textContent = holidays[key] || "কোনো ছুটি নেই";
+    }
+    checkHoliday();
+
+    // --- ঋতু নির্ধারণ ---
+    function getRitu() {
+      const ritus = ["গ্রীষ্ম","বর্ষা","শরৎ","হেমন্ত","শীত","বসন্ত"];
+      const month = new Date().getMonth() + 1;
+      if ([4,5].includes(month)) return ritus[0]; // গ্রীষ্ম
+      if ([6,7].includes(month)) return ritus[1]; // বর্ষা
+      if ([8,9].includes(month)) return ritus[2]; // শরৎ
+      if ([10,11].includes(month)) return ritus[3]; // হেমন্ত
+      if ([12,1].includes(month)) return ritus[4]; // শীত
+      return ritus[5]; // বসন্ত
+    }
+    document.getElementById("ritu").textContent = getRitu();
+  </script>
 </body>
 </html>
