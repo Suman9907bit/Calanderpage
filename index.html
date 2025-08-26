@@ -3,164 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Jana Online Service - Smart Calendar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
-    .header {
-      width: 100%;
-      background: #4a90e2;
-      color: #fff;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .calendar {
-      width: 380px;
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-      overflow: hidden;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .calendar-header {
-      background: #4a90e2;
-      color: #fff;
-      padding: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .calendar-header button {
-      background: #fff;
-      color: #4a90e2;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      padding: 10px;
-      text-align: center;
-    }
-    .day-name {
-      font-weight: bold;
-      color: #4a90e2;
-    }
-    .day {
-      padding: 10px;
-      margin: 3px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .day:hover {
-      background: #d0e6ff;
-    }
-    .today {
-      background: #4a90e2;
-      color: #fff;
-    }
-    .extra-info {
-      background: #f9f9f9;
-      padding: 12px;
-      border-top: 1px solid #ddd;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .highlight {
-      color: red;
-      font-weight: bold;
-    }
-    .footer {
-      width: 100%;
-      background: #333;
-      color: #fff;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 14px;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <div class="header">
-    Jana Online Service
-  </div>
-
-  <!-- Calendar -->
-  <div class="calendar">
-    <div class="calendar-header">
-      <button onclick="prevMonth()">◀</button>
-      <span id="monthYear"></span>
-      <button onclick="nextMonth()">▶</button>
-    </div>
-    <div class="days" id="dayNames"></div>
-    <div class="days" id="calendarDays"></div>
-
-    <!-- নিচে লাইভ ইনফো -->
-    <div class="extra-info">
-      ⏰ সময়: <span id="liveTime"></span><br>
-      📅 বাংলা তারিখ: <span id="banglaDate"></span><br>
-      🏛 সরকারি ছুটি: <span id="holiday"></span><br>
-      🌿 ঋতু: <span id="ritu"></span>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    Credit by Suman
-  </div>
-
-  <script>
-    const monthYear = document.getElementById("monthYear");
-    const calendarDays = document.getElementById("calendarDays");
-    const dayNames = document.getElementById("dayNames");
-
-    const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    dayNames.innerHTML = dayLabels.map(d => `<div class="day-name">${d}</div>`).join("");
-
-    let date = new Date();
-
-    // --- ক্যালেন্ডার রেন্ডার ---
-    function renderCalendar() {
-      const year = date.getFullYear();
-      const month = date.getMonth();
-
-      monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const lastDate = new Date(year, month + 1, 0).getDate();
-
-      let days = "";
-      for (let i = 0; i < firstDay; i++) {
-        days += `<div></div>`;
-      }
-
-      for (let i = 1; i <= lastDate; i++) {
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <title>Jana Online Service - Smart Calendar</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0;}
@@ -169,7 +11,6 @@
       background: #f4f6f9;
       display: flex;
       flex-direction: column;
-      align-items: center;
       min-height: 100vh;
     }
     .header {
@@ -182,15 +23,26 @@
       font-weight: bold;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
+
+    /* Layout container */
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    /* Calendar card */
     .calendar {
-      width: 95%;
+      width: 100%;
       max-width: 420px;
       background: #fff;
       border-radius: 15px;
       box-shadow: 0 5px 20px rgba(0,0,0,0.2);
       overflow: hidden;
       text-align: center;
-      margin: 20px 0;
     }
     .calendar-header {
       background: #4a90e2;
@@ -233,14 +85,22 @@
     .today { background: #4a90e2; color: #fff; font-weight: bold; }
     .holiday { background: #ffcccc; color: #c00; font-weight: bold; }
 
-    /* Extra Info Smart Style */
+    /* Extra info box */
+    .extra-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 500px;
+    }
     .extra-info {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       padding: 15px;
       background: #f9f9f9;
-      border-top: 1px solid #ddd;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .info-box {
       background: #fff;
@@ -260,10 +120,10 @@
     .next-holiday {
       background: #e6f7ff;
       color: #004080;
-      padding: 10px;
-      margin: 10px;
+      padding: 12px;
       border-radius: 10px;
       font-weight: bold;
+      text-align: center;
     }
 
     /* Button Section */
@@ -272,6 +132,7 @@
       justify-content: center;
       gap: 15px;
       padding: 15px;
+      flex-wrap: wrap;
     }
     .buttons button {
       background: #4a90e2;
@@ -299,7 +160,18 @@
       margin-top: auto;
     }
 
-    /* Responsive */
+    /* ✅ Responsive for large screens */
+    @media (min-width: 992px) {
+      .main-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .calendar { flex: 1; }
+      .extra-container { flex: 1; }
+    }
+
+    /* Small screens tweak */
     @media (max-width: 500px) {
       .calendar-header { font-size: 16px; }
       .day, .day-name { font-size: 12px; padding: 6px; }
@@ -309,31 +181,30 @@
 </head>
 <body>
   <!-- Header -->
-  <div class="header">
-    Jana Online Service
-  </div>
+  <div class="header">Jana Online Service</div>
 
-  <!-- Calendar -->
-  <div class="calendar" id="calendarArea">
-    <div class="calendar-header">
-      <button onclick="prevMonth()">◀</button>
-      <span id="monthYear"></span>
-      <button onclick="nextMonth()">▶</button>
-    </div>
-    <div class="days" id="dayNames"></div>
-    <div class="days" id="calendarDays"></div>
-
-    <!-- নিচে লাইভ ইনফো -->
-    <div class="extra-info">
-      <div class="info-box">⏰ সময় <span id="liveTime"></span></div>
-      <div class="info-box">📅 বাংলা তারিখ <span id="banglaDate"></span></div>
-      <div class="info-box">🏛 আজকের ছুটি <span id="holiday"></span></div>
-      <div class="info-box">🌿 ঋতু <span id="ritu"></span></div>
+  <!-- Main Layout -->
+  <div class="main-container">
+    <!-- Calendar -->
+    <div class="calendar" id="calendarArea">
+      <div class="calendar-header">
+        <button onclick="prevMonth()">◀</button>
+        <span id="monthYear"></span>
+        <button onclick="nextMonth()">▶</button>
+      </div>
+      <div class="days" id="dayNames"></div>
+      <div class="days" id="calendarDays"></div>
     </div>
 
-    <!-- Next Holiday -->
-    <div class="next-holiday" id="nextHoliday">
-      🔔 Next Holiday: Loading...
+    <!-- Extra Info Section -->
+    <div class="extra-container">
+      <div class="extra-info">
+        <div class="info-box">⏰ সময় <span id="liveTime"></span></div>
+        <div class="info-box">📅 বাংলা তারিখ <span id="banglaDate"></span></div>
+        <div class="info-box">🏛 আজকের ছুটি <span id="holiday"></span></div>
+        <div class="info-box">🌿 ঋতু <span id="ritu"></span></div>
+      </div>
+      <div class="next-holiday" id="nextHoliday">🔔 Next Holiday: Loading...</div>
     </div>
   </div>
 
@@ -344,9 +215,7 @@
   </div>
 
   <!-- Footer -->
-  <div class="footer">
-    Credit by Suman
-  </div>
+  <div class="footer">Credit by Suman</div>
 
   <script>
     const monthYear = document.getElementById("monthYear");
@@ -358,7 +227,7 @@
 
     let date = new Date();
 
-    // --- ভারতের Holiday লিস্ট (2025 উদাহরণ) ---
+    // --- Holiday List (India 2025 Example) ---
     const holidays = {
       "1-1": "New Year",
       "14-1": "Makar Sankranti",
@@ -371,20 +240,16 @@
       "25-12": "Christmas"
     };
 
-    // --- ক্যালেন্ডার রেন্ডার ---
+    // Calendar Render
     function renderCalendar() {
       const year = date.getFullYear();
       const month = date.getMonth();
-
       monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
-
       const firstDay = new Date(year, month, 1).getDay();
       const lastDate = new Date(year, month + 1, 0).getDate();
 
       let days = "";
-      for (let i = 0; i < firstDay; i++) {
-        days += `<div></div>`;
-      }
+      for (let i = 0; i < firstDay; i++) { days += `<div></div>`; }
 
       for (let i = 1; i <= lastDate; i++) {
         let cls = "day";
@@ -393,35 +258,23 @@
           cls += " today";
         }
         const key = `${i}-${month+1}`;
-        if (holidays[key]) {
-          cls += " holiday";
-        }
+        if (holidays[key]) { cls += " holiday"; }
         days += `<div class="${cls}">${i}</div>`;
       }
-
       calendarDays.innerHTML = days;
     }
-
-    function prevMonth() {
-      date.setMonth(date.getMonth() - 1);
-      renderCalendar();
-    }
-    function nextMonth() {
-      date.setMonth(date.getMonth() + 1);
-      renderCalendar();
-    }
-
+    function prevMonth() { date.setMonth(date.getMonth() - 1); renderCalendar(); }
+    function nextMonth() { date.setMonth(date.getMonth() + 1); renderCalendar(); }
     renderCalendar();
 
-    // --- লাইভ টাইম ---
+    // Live Time
     function updateTime() {
       const now = new Date();
       document.getElementById("liveTime").textContent = now.toLocaleTimeString("bn-BD");
     }
-    setInterval(updateTime, 1000);
-    updateTime();
+    setInterval(updateTime, 1000); updateTime();
 
-    // --- বাংলা তারিখ (Approx) ---
+    // Bangla Date (Approx)
     function getBanglaDate() {
       const months = ["বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"];
       const now = new Date();
@@ -432,7 +285,7 @@
     }
     document.getElementById("banglaDate").textContent = getBanglaDate();
 
-    // --- আজকের ছুটি ---
+    // Today Holiday
     function checkHoliday() {
       const now = new Date();
       const key = `${now.getDate()}-${now.getMonth()+1}`;
@@ -440,7 +293,7 @@
     }
     checkHoliday();
 
-    // --- ঋতু ---
+    // Ritu
     function getRitu() {
       const ritus = ["গ্রীষ্ম","বর্ষা","শরৎ","হেমন্ত","শীত","বসন্ত"];
       const month = new Date().getMonth() + 1;
@@ -453,7 +306,7 @@
     }
     document.getElementById("ritu").textContent = getRitu();
 
-    // --- Next Holiday ---
+    // Next Holiday
     function getNextHoliday() {
       const now = new Date();
       let next = null;
@@ -475,7 +328,7 @@
     }
     getNextHoliday();
 
-    // --- Print Function ---
+    // Print
     function printCalendar() {
       const content = document.getElementById("calendarArea").innerHTML;
       const win = window.open("", "", "width=800,height=600");
@@ -488,7 +341,7 @@
       win.print();
     }
 
-    // --- Download PDF Function ---
+    // Download PDF
     function downloadPDF() {
       const element = document.getElementById("calendarArea");
       const opt = {
