@@ -156,16 +156,247 @@
       }
 
       for (let i = 1; i <= lastDate; i++) {
-        let today = "";
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Jana Online Service - Smart Calendar</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <style>
+    * {box-sizing: border-box; margin: 0; padding: 0;}
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .header {
+      width: 100%;
+      background: #4a90e2;
+      color: #fff;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .calendar {
+      width: 95%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .calendar-header {
+      background: #4a90e2;
+      color: #fff;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .calendar-header button {
+      background: #fff;
+      color: #4a90e2;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 10px;
+      text-align: center;
+    }
+    .day-name {
+      font-weight: bold;
+      color: #4a90e2;
+      font-size: 14px;
+    }
+    .day {
+      padding: 8px;
+      margin: 2px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .day:hover { background: #d0e6ff; }
+    .today { background: #4a90e2; color: #fff; font-weight: bold; }
+    .holiday { background: #ffcccc; color: #c00; font-weight: bold; }
+
+    /* Extra Info Smart Style */
+    .extra-info {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-top: 1px solid #ddd;
+    }
+    .info-box {
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-size: 14px;
+      text-align: center;
+    }
+    .info-box span {
+      display: block;
+      margin-top: 5px;
+      font-weight: bold;
+      color: #4a90e2;
+    }
+
+    .next-holiday {
+      background: #e6f7ff;
+      color: #004080;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    /* Button Section */
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 15px;
+    }
+    .buttons button {
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      transition: 0.2s;
+    }
+    .buttons button:hover {
+      background: #357ac9;
+      transform: scale(1.05);
+    }
+
+    .footer {
+      width: 100%;
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 14px;
+      margin-top: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .calendar-header { font-size: 16px; }
+      .day, .day-name { font-size: 12px; padding: 6px; }
+      .extra-info { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    Jana Online Service
+  </div>
+
+  <!-- Calendar -->
+  <div class="calendar" id="calendarArea">
+    <div class="calendar-header">
+      <button onclick="prevMonth()">◀</button>
+      <span id="monthYear"></span>
+      <button onclick="nextMonth()">▶</button>
+    </div>
+    <div class="days" id="dayNames"></div>
+    <div class="days" id="calendarDays"></div>
+
+    <!-- নিচে লাইভ ইনফো -->
+    <div class="extra-info">
+      <div class="info-box">⏰ সময় <span id="liveTime"></span></div>
+      <div class="info-box">📅 বাংলা তারিখ <span id="banglaDate"></span></div>
+      <div class="info-box">🏛 আজকের ছুটি <span id="holiday"></span></div>
+      <div class="info-box">🌿 ঋতু <span id="ritu"></span></div>
+    </div>
+
+    <!-- Next Holiday -->
+    <div class="next-holiday" id="nextHoliday">
+      🔔 Next Holiday: Loading...
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="buttons">
+    <button onclick="printCalendar()">🖨 Print</button>
+    <button onclick="downloadPDF()">⬇ Download PDF</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Credit by Suman
+  </div>
+
+  <script>
+    const monthYear = document.getElementById("monthYear");
+    const calendarDays = document.getElementById("calendarDays");
+    const dayNames = document.getElementById("dayNames");
+
+    const dayLabels = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    dayNames.innerHTML = dayLabels.map(d => `<div class="day-name">${d}</div>`).join("");
+
+    let date = new Date();
+
+    // --- ভারতের Holiday লিস্ট (2025 উদাহরণ) ---
+    const holidays = {
+      "1-1": "New Year",
+      "14-1": "Makar Sankranti",
+      "26-1": "Republic Day",
+      "17-3": "Holi",
+      "15-8": "Independence Day",
+      "2-10": "Gandhi Jayanti",
+      "12-10": "Durga Puja",
+      "20-10": "Diwali",
+      "25-12": "Christmas"
+    };
+
+    // --- ক্যালেন্ডার রেন্ডার ---
+    function renderCalendar() {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      let days = "";
+      for (let i = 0; i < firstDay; i++) {
+        days += `<div></div>`;
+      }
+
+      for (let i = 1; i <= lastDate; i++) {
+        let cls = "day";
         const currentDate = new Date();
-        if (
-          i === currentDate.getDate() &&
-          month === currentDate.getMonth() &&
-          year === currentDate.getFullYear()
-        ) {
-          today = "today";
+        if (i === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear()) {
+          cls += " today";
         }
-        days += `<div class="day ${today}">${i}</div>`;
+        const key = `${i}-${month+1}`;
+        if (holidays[key]) {
+          cls += " holiday";
+        }
+        days += `<div class="${cls}">${i}</div>`;
       }
 
       calendarDays.innerHTML = days;
@@ -190,44 +421,85 @@
     setInterval(updateTime, 1000);
     updateTime();
 
-    // --- বাংলা তারিখ (সাধারণ কনভার্সন) ---
+    // --- বাংলা তারিখ (Approx) ---
     function getBanglaDate() {
       const months = ["বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"];
       const now = new Date();
       const day = now.getDate();
-      const month = (now.getMonth() + 8) % 12; // Approximate Bangla month shift
-      const year = now.getFullYear() - 593; // Bangla year offset
-
+      const month = (now.getMonth() + 8) % 12;
+      const year = now.getFullYear() - 593;
       return `${day} ${months[month]} ${year} বঙ্গাব্দ`;
     }
     document.getElementById("banglaDate").textContent = getBanglaDate();
 
-    // --- সরকারি ছুটি চেক ---
+    // --- আজকের ছুটি ---
     function checkHoliday() {
-      const holidays = {
-        "1-1": "নববর্ষ",
-        "26-1": "প্রজাতন্ত্র দিবস",
-        "15-8": "স্বাধীনতা দিবস",
-        "16-12": "বিজয় দিবস",
-      };
       const now = new Date();
       const key = `${now.getDate()}-${now.getMonth()+1}`;
       document.getElementById("holiday").textContent = holidays[key] || "কোনো ছুটি নেই";
     }
     checkHoliday();
 
-    // --- ঋতু নির্ধারণ ---
+    // --- ঋতু ---
     function getRitu() {
       const ritus = ["গ্রীষ্ম","বর্ষা","শরৎ","হেমন্ত","শীত","বসন্ত"];
       const month = new Date().getMonth() + 1;
-      if ([4,5].includes(month)) return ritus[0]; // গ্রীষ্ম
-      if ([6,7].includes(month)) return ritus[1]; // বর্ষা
-      if ([8,9].includes(month)) return ritus[2]; // শরৎ
-      if ([10,11].includes(month)) return ritus[3]; // হেমন্ত
-      if ([12,1].includes(month)) return ritus[4]; // শীত
-      return ritus[5]; // বসন্ত
+      if ([4,5].includes(month)) return ritus[0];
+      if ([6,7].includes(month)) return ritus[1];
+      if ([8,9].includes(month)) return ritus[2];
+      if ([10,11].includes(month)) return ritus[3];
+      if ([12,1].includes(month)) return ritus[4];
+      return ritus[5];
     }
     document.getElementById("ritu").textContent = getRitu();
+
+    // --- Next Holiday ---
+    function getNextHoliday() {
+      const now = new Date();
+      let next = null;
+      for (const key in holidays) {
+        const [d,m] = key.split("-").map(Number);
+        const holidayDate = new Date(now.getFullYear(), m-1, d);
+        if (holidayDate >= now) {
+          next = {date: holidayDate, name: holidays[key]};
+          break;
+        }
+      }
+      if (next) {
+        const options = { day: "numeric", month: "long" };
+        document.getElementById("nextHoliday").textContent = 
+          `🔔 Next Holiday: ${next.name} (${next.date.toLocaleDateString("en-IN", options)})`;
+      } else {
+        document.getElementById("nextHoliday").textContent = "No upcoming holiday this year!";
+      }
+    }
+    getNextHoliday();
+
+    // --- Print Function ---
+    function printCalendar() {
+      const content = document.getElementById("calendarArea").innerHTML;
+      const win = window.open("", "", "width=800,height=600");
+      win.document.write("<html><head><title>Print Calendar</title>");
+      win.document.write("<style>body{font-family:sans-serif; padding:20px;} .calendar{max-width:600px;margin:auto;}</style>");
+      win.document.write("</head><body>");
+      win.document.write(content);
+      win.document.write("</body></html>");
+      win.document.close();
+      win.print();
+    }
+
+    // --- Download PDF Function ---
+    function downloadPDF() {
+      const element = document.getElementById("calendarArea");
+      const opt = {
+        margin: 0.5,
+        filename: "SmartCalendar.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
   </script>
 </body>
 </html>
